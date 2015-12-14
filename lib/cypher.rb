@@ -8,7 +8,6 @@ class Cypher
 
   def initialize
     @full_cypher_arr = letters_arr + zero_to_9_arr + extra_char_arr
-    binding.pry
   end
 
   def letters_arr
