@@ -11,8 +11,16 @@ class EnigmaTest < Minitest::Test
 
   def test_encrypt_method_calls_on_encrypt_class
     e = Enigma.new
-    e.encrypt("This is a message test")
 
-    assert_equal Encrypt, e.encrypted_message.class
+
+    assert_equal Encrypt, e.encrypt("This is a message test", 12345).class
   end
+
+  def test_decrypt_method_calls_on_decrypt_class
+    e = Enigma.new
+
+    assert_equal Decrypt, e.decrypt(".6f3p7piswjp_e_rwwqp_f", 12345).class
+  end
+
+
 end

@@ -6,7 +6,10 @@ class EncryptionEngine
               :underscore_it,
               :arr_of_string,
               :arr_of_string_to_aski,
-              :key_with_date_arr_extended
+              :key_with_date_arr_extended,
+              :break_encrypted_message_into_array,
+              :arr_of_aski_values_encrypt,
+              :arr_of_aski_values_decrypt
 
   def initialize
     @wheels = 4
@@ -37,7 +40,7 @@ class EncryptionEngine
 
   def arr_of_string_to_aski(string)
     c = Cypher.new
-    @arr_of_aski_values = arr_of_string(string).map do |string|
+    @arr_of_aski_values_encrypt = arr_of_string(string).map do |string|
       c.full_cypher_arr.index(string)
     end
   end
@@ -50,8 +53,9 @@ class EncryptionEngine
     end
   end
 
-  def extend_key_with_date_arr
-    length_of_message = @arr_of_aski_values.count
+  def extend_key_with_date_arr(encrypt_or_decrypt_arr)
+
+    length_of_message = encrypt_or_decrypt_arr.count
     arr_multiplyer = length_of_message / @wheels
     extra_letters = length_of_message % @wheels
 
@@ -65,7 +69,7 @@ class EncryptionEngine
     index = -1
     @key_date_aski_arr = @key_with_date_arr_extended.map do |number|
       index += 1
-      @arr_of_aski_values[index] + number
+      @arr_of_aski_values_encrypt[index] + number
     end
   end
 
@@ -75,6 +79,41 @@ class EncryptionEngine
        c.full_cypher_arr[number % 39]
      end
   end
+
+#dycrypt
+
+  def break_encrypted_message_into_array(string)
+    new_string = string.to_s
+    @arr_of_encrypted_message = new_string.chars
+  end
+
+  def convert_arr_of_encrypted_message_to_reverse_cyper_aski
+    c = Cypher.new
+    @arr_of_aski_values_decrypt = @arr_of_encrypted_message.map do |each|
+      c.full_cypher_arr_bkwrd.index(each)
+    end
+  end
+
+  def add_arr_of_aski_values_decrypt_to_key_with_date_extended
+    index = -1
+    @key_date_aski_arr_decrypt = @key_with_date_arr_extended.map do |number|
+      index += 1
+      @arr_of_aski_values_decrypt[index] + number
+    end
+  end
+
+  def decrypt_integers_after_adjust_back_to_letters
+    c = Cypher.new
+    @decrypted_message_arr = @key_date_aski_arr_decrypt.map do |number|
+       c.full_cypher_arr_bkwrd[number % 39]
+     end
+  end
+
+  def combine_decrypted_message_and_delete_the_underscores
+    @decrypted_message_arr.join.tr("_"," ")
+  end
+
+
 
 
 end

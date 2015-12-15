@@ -54,7 +54,7 @@ class EncryptionEngineTest < Minitest::Test
     e.abcd_rotations_split(12345)
     e.date_rotations_split(121215)
     e.add_date_to_key_arr
-    e.extend_key_with_date_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_encrypt)
     total = e.key_with_date_arr_extended.count
 
     assert_equal total, string_arr.count
@@ -66,7 +66,7 @@ class EncryptionEngineTest < Minitest::Test
     e.abcd_rotations_split(12345)
     e.date_rotations_split(121215)
     e.add_date_to_key_arr
-    e.extend_key_with_date_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_encrypt)
     e.add_arr_of_aski_values_to_key_with_date_extended
 
     assert_equal [54, 63, 72, 54, 31, 28, 73, 87, 55], e.add_arr_of_aski_values_to_key_with_date_extended
@@ -78,12 +78,100 @@ class EncryptionEngineTest < Minitest::Test
     e.abcd_rotations_split(12345)
     e.date_rotations_split(121215)
     e.add_date_to_key_arr
-    e.extend_key_with_date_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_encrypt)
     e.add_arr_of_aski_values_to_key_with_date_extended
 
 
     assert_equal ["p", "y", "7", "p", "5", "2", "8", "j", "q"], e.encrypt_integers_after_adjust_back_to_letters
   end
+
+  def test_encrypt_message_array
+    e = EncryptionEngine.new
+    string_arr = e.arr_of_string_to_aski(" , end...")
+    e.abcd_rotations_split(12345)
+    e.date_rotations_split(121215)
+    e.add_date_to_key_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_encrypt)
+    e.add_arr_of_aski_values_to_key_with_date_extended
+
+
+    assert_equal ["p", "y", "7", "p", "5", "2", "8", "j", "q"], e.encrypt_integers_after_adjust_back_to_letters
+  end
+
+  #dycrypt
+
+  def test_break_encrypted_message_into_array
+    e = EncryptionEngine.new
+    array_length = e.break_encrypted_message_into_array(".6f3p7piswjp_e_rwwqp_f")
+
+    assert_equal 22, array_length.count
+    assert_equal [".", "6", "f", "3", "p"], array_length[0..4]
+  end
+
+  def test_convert_arr_of_encrypted_message_to_reverse_cyper_aski
+    e = EncryptionEngine.new
+    e.break_encrypted_message_into_array(".6f3p7piswjp_e_rwwqp_f")
+    array_length = e.convert_arr_of_encrypted_message_to_reverse_cyper_aski
+
+    assert_equal [1, 6, 33, 9, 23], array_length[0..4]
+  end
+
+  def test_decrypted_extend_key_with_date_arr_is_length_of_message
+    e = EncryptionEngine.new
+    e.break_encrypted_message_into_array(".6f3p7piswjp_e_rwwqp_f")
+    array_length = e.convert_arr_of_encrypted_message_to_reverse_cyper_aski
+    x = array_length.count
+    e.abcd_rotations_split(12345)
+    e.date_rotations_split(121215)
+    e.add_date_to_key_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_decrypt)
+
+    assert_equal x, e.key_with_date_arr_extended.count
+
+  end
+
+  def test_decrypted_extend_key_with_date_arr_is_added_to_reverse_aski
+    e = EncryptionEngine.new
+    e.break_encrypted_message_into_array(".6f3p7piswjp_e_rwwqp_f")
+    e.convert_arr_of_encrypted_message_to_reverse_cyper_aski
+    e.abcd_rotations_split(12345)
+    e.date_rotations_split(121215)
+    e.add_date_to_key_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_decrypt)
+    test_arr = e.add_arr_of_aski_values_decrypt_to_key_with_date_extended
+
+    assert_equal [19, 31, 69, 59, 41], test_arr[0..4]
+  end
+
+  def test_encrypt_integers_after_adjust_back_to_letters
+    e = EncryptionEngine.new
+    e.break_encrypted_message_into_array(".6f3p7piswjp_e_rwwqp_f")
+    e.convert_arr_of_encrypted_message_to_reverse_cyper_aski
+    e.abcd_rotations_split(12345)
+    e.date_rotations_split(121215)
+    e.add_date_to_key_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_decrypt)
+    e.add_arr_of_aski_values_decrypt_to_key_with_date_extended
+
+
+    assert_equal ["t", "h", "i", "s", "_"], e.decrypt_integers_after_adjust_back_to_letters[0..4]
+  end
+
+
+  def test_combine_decrypted_message_and_delete_the_underscores
+    e = EncryptionEngine.new
+    e.break_encrypted_message_into_array(".6f3p7piswjp_e_rwwqp_f")
+    e.convert_arr_of_encrypted_message_to_reverse_cyper_aski
+    e.abcd_rotations_split(12345)
+    e.date_rotations_split(121215)
+    e.add_date_to_key_arr
+    e.extend_key_with_date_arr(e.arr_of_aski_values_decrypt)
+    e.add_arr_of_aski_values_decrypt_to_key_with_date_extended
+    e.decrypt_integers_after_adjust_back_to_letters
+
+    assert_equal "this is a message test", e.combine_decrypted_message_and_delete_the_underscores
+  end
+
 
 
 

@@ -25,4 +25,10 @@ class CypherTest < Minitest::Test
 
     assert_equal 39, c.full_cypher_arr.count
   end
+
+  def test_puts_cypher_array_into_reverse
+    c = Cypher.new
+
+    assert_equal ["d", "c", "b", "a"], c.full_cypher_arr_bkwrd[-4..-1]
+  end
 end
